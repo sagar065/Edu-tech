@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "*", // Change this to your frontend URL after deployment
+        origin: "https://edu-tech-rho-eight.vercel.app", // Change this to your frontend URL after deployment
         credentials: true,
     })
 );

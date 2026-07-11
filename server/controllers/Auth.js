@@ -4,7 +4,8 @@ const OTP = require("../models/OTP")
 const jwt = require("jsonwebtoken")
 const otpGenerator = require("otp-generator")
 const mailSender = require("../utils/mailSender")
-const { passwordUpdated } = require("../mail/templates/passwordUpdate")
+const { passwordReset } = require("../mail/templates/passwordUpdate")
+const otpTemplate  = require("../mail/templates/emailVerificationTemplate")
 const Profile = require("../models/Profile")
 require("dotenv").config()
 
@@ -13,68 +14,63 @@ require("dotenv").config()
 // ==========================================
 exports.sendotp = async (req, res) => {
   try {
-    const { email } = req.body
+    const { email } = req.body;
 
-    // Check if user is already present
-    const checkUserPresent = await User.findOne({ email })
-
-    if (checkUserPresent) {
-      return res.status(401).json({
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
         success: false,
-        message: "User is Already Registered",
-      })
+        message: "User is already registered.",
+      });
     }
 
-    // Generate OTP
-    let otp = otpGenerator.generate(6, {
-      upperCaseAlphabets: false,
-      lowerCaseAlphabets: false,
-      specialChars: false,
-    })
-
-    // Check uniqueness of OTP in DB
-    let result = await OTP.findOne({ otp: otp })
-
-    // FIXED: Now updating 'result' inside the loop to prevent hanging
-    while (result) {
+    // Generate unique OTP
+    let otp;
+    let isUnique = false;
+    
+    while (!isUnique) {
       otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
         lowerCaseAlphabets: false,
         specialChars: false,
-      })
-      result = await OTP.findOne({ otp: otp })
+      });
+      
+      const existingOTP = await OTP.findOne({ otp });
+      if (!existingOTP) {
+        isUnique = true;
+      }
     }
 
-    const otpPayload = { email, otp }
+    // Save OTP to database
+    await OTP.create({ email, otp });
 
-    // This 'create' call triggers the .pre('save') hook in your OTP model to send the email
-    const otpBody = await OTP.create(otpPayload)
-    
-    try{
-      await mailSender(email, "Your OTP for StudyNotion", `Your OTP is ${otp}. It is valid for 10 minutes.`)
-    } catch (error) {
-      console.error("Error sending OTP email:", error)
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send OTP email"
-      })
+    // Send email with OTP
+    try {
+      const emailBody = otpTemplate(otp);
+      await mailSender(
+        email,
+        "StudyNotion - Email Verification OTP", `${otp} is your OTP for email verification. Please use this to complete your registration and it is valid for 10 minutes.`,
+        emailBody
+      );
+      console.log(`OTP email sent to ${email}`);
+    } catch (emailError) {
+      console.error("Email sending failed:", emailError.message);
+      // Continue - OTP is saved even if email fails
     }
-    console.log("OTP Body created:", otpBody)
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "OTP Sent Successfully",
-      otp,
-    })
+      message: "OTP sent successfully",
+    });
   } catch (error) {
-    console.log("Error in sendotp:", error.message)
-    return res.status(500).json({ 
-        success: false, 
-        message: "OTP could not be sent",
-        error: error.message 
-    })
+    console.error("Send OTP Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to send OTP",
+    });
   }
-}
+};
 
 // ==========================================
 // 2. Signup Controller
@@ -229,53 +225,54 @@ exports.login = async (req, res) => {
 // ==========================================
 exports.changePassword = async (req, res) => {
   try {
-    const userDetails = await User.findById(req.user.id)
-    const { oldPassword, newPassword } = req.body
+    const { oldPassword, newPassword, confirmNewPassword } = req.body;
+    const user = await User.findById(req.user.id);
 
-    const isPasswordMatch = await bcrypt.compare(oldPassword, userDetails.password)
+    // Validate old password
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isPasswordMatch) {
       return res.status(401).json({ 
-          success: false, 
-          message: "The old password is incorrect" 
-      })
+        success: false, 
+        message: "Current password is incorrect" 
+      });
     }
 
-    const encryptedPassword = await bcrypt.hash(newPassword, 10)
-    const updatedUserDetails = await User.findByIdAndUpdate(
+    // Check if new passwords match
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password and confirm password do not match",
+      });
+    }
+
+    // Update password
+    const encryptedPassword = await bcrypt.hash(newPassword, 10);
+    await User.findByIdAndUpdate(
       req.user.id,
       { password: encryptedPassword },
       { new: true }
-    )
+    );
 
-    // Send Email
+    // Send notification email
     try {
-      await mailSender(
-        updatedUserDetails.email,
-        "Password Updated",
-        passwordUpdated(
-          updatedUserDetails.email,
-          `Password updated successfully for ${updatedUserDetails.firstName}`
-        )
-      )
-    } catch (error) {
-      console.error("Error sending email:", error)
-      // We don't necessarily want to fail the whole request if email fails, 
-      // but in this project, we return a 500.
-      return res.status(500).json({
-        success: false,
-        message: "Password updated but email failed",
-        error: error.message,
-      })
+      const emailBody = passwordReset(
+        user.email,
+        `Password updated successfully for ${user.firstName} ${user.lastName}`
+      );
+      await mailSender(user.email, "Password Updated Successfully", emailBody);
+    } catch (emailError) {
+      console.error("Password update email failed:", emailError.message);
     }
 
     return res.status(200).json({ 
-        success: true, 
-        message: "Password updated successfully" 
-    })
+      success: true, 
+      message: "Password updated successfully" 
+    });
   } catch (error) {
+    console.error("Change Password Error:", error);
     return res.status(500).json({
       success: false,
-      message: "Error occurred while updating password",
-    })
+      message: "Failed to update password",
+    });
   }
-}
+};
