@@ -13,7 +13,7 @@ export default function EditProfile() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    //formState: { errors },
   } = useForm({
     defaultValues: {
       firstName: user?.firstName || "",

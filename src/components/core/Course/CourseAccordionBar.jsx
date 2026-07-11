@@ -14,7 +14,7 @@ export default function CourseAccordionBar({ course, isActive, handleActive }) {
   const [sectionHeight, setSectionHeight] = useState(0)
   useEffect(() => {
     setSectionHeight(active ? contentEl.current.scrollHeight : 0)
-  }, [active])
+  }, [active, course._id])
 
   return (
     <div className="overflow-hidden border border-solid border-richblack-600 bg-richblack-700 text-richblack-5 last:mb-0">
