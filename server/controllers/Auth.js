@@ -49,6 +49,15 @@ exports.sendotp = async (req, res) => {
 
     // This 'create' call triggers the .pre('save') hook in your OTP model to send the email
     const otpBody = await OTP.create(otpPayload)
+    try{
+      await mailSender(email, "Your OTP for StudyNotion", `Your OTP is ${otp}. It is valid for 10 minutes.`)
+    } catch (error) {
+      console.error("Error sending OTP email:", error)
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email"
+      })
+    }
     console.log("OTP Body created:", otpBody)
 
     res.status(200).json({
