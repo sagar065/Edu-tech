@@ -26,7 +26,7 @@ exports.passwordReset = (url, name) => {
 	</head>
 	<body>
 		<div class="container">
-			<a href="https://studynotion-edtech-project.vercel.app"><img class="logo" src="https://i.ibb.co/spx86vxF/logo.png" alt="StudyNotion Logo"></a>
+			<a href="https://edu-tech-rho-eight.vercel.app"><img class="logo" src="https://i.ibb.co/spx86vxF/logo.png" alt="StudyNotion Logo"></a>
 			<div class="message">Password Reset Request</div>
 			<div class="body">
 				<p>Hey ${name ? name : "User"},</p>
@@ -59,14 +59,14 @@ exports.passwordUpdated = (email, name) => {
     </head>
     <body>
         <div class="container">
-            <a href="https://studynotion-edtech-project.vercel.app"><img class="logo" src="https://i.ibb.co/spx86vxF/logo.png" alt="StudyNotion Logo"></a>
+            <a href="https://edu-tech-rho-eight.vercel.app"><img class="logo" src="https://i.ibb.co/spx86vxF/logo.png" alt="StudyNotion Logo"></a>
             <div class="message">Password Update Confirmation</div>
             <div class="body">
                 <p>Hey ${name},</p>
                 <p>Your password has been successfully updated for the email <span class="highlight">${email}</span>.</p>
                 <p>If you did not request this password change, please contact us immediately to secure your account.</p>
             </div>
-            <div class="support">Reach out at <a href="mailto:studynotionedtech.info@gmail.com">studynotionedtech.info@gmail.com</a>.</div>
+            <div class="support">Reach out at <a href="mailto:sagarbhandari243@gmail.com">sagarbhandari243@gmail.com</a>.</div>
         </div>
     </body>
     </html>`;
