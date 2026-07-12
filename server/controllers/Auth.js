@@ -86,7 +86,7 @@ exports.signup = async (req, res) => {
       accountType,
       contactNumber,
       otp,
-    } = req.body
+    } = req.body || {}
 
     // Validate fields
     if (!firstName || !lastName || !email || !password || !confirmPassword || !otp) {
