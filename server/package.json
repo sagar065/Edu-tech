@@ -29,5 +29,8 @@
 		"otp-generator": "^4.0.1",
 		"razorpay": "^2.9.6",
 		"resend": "^6.17.2"
+	},
+	"engines": {
+		"node": ">=18.0.0"
 	}
 }
