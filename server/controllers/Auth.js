@@ -50,7 +50,6 @@ exports.sendotp = async (req, res) => {
       const emailBody = otpTemplate(otp);
       await mailSender(
         email,
-        "StudyNotion - Email Verification OTP", `${otp} is your OTP for email verification. Please use this to complete your registration and it is valid for 10 minutes.`,
         emailBody
       );
       console.log(`OTP email sent to ${email}`);
