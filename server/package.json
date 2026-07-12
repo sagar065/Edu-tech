@@ -25,10 +25,10 @@
 		"jsonwebtoken": "^9.0.2",
 		"mongoose": "^7.8.7",
 		"node-schedule": "^2.1.1",
+		"nodemailer": "^9.0.3",
 		"nodemon": "^2.0.22",
 		"otp-generator": "^4.0.1",
-		"razorpay": "^2.9.6",
-		"resend": "^6.17.2"
+		"razorpay": "^2.9.6"
 	},
 	"engines": {
 		"node": ">=18.0.0"
