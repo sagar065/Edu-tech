@@ -48,10 +48,12 @@ exports.sendotp = async (req, res) => {
     // Send email with OTP
     try {
       const emailBody = otpTemplate(otp);
+      console.log("sending mail.....")
       await mailSender(
         email,
         emailBody
       );
+      console.log("mail sent successfully....")
       console.log(`OTP email sent to ${email}`);
     } catch (emailError) {
       console.error("Email sending failed:", emailError.message);
