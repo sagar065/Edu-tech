@@ -94,7 +94,7 @@ function VerifyEmail() {
               </p>
             </Link>
 
-            {console.log("signup Data in UI:", signupData)}
+            {/* {console.log("signup Data in UI:", signupData)} */}
             
             <button
               className="flex items-center text-blue-100 gap-x-2"

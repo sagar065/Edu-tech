@@ -79,23 +79,26 @@ export default function ChangeProfilePicture() {
                 className="hidden"
                 accept="image/png, image/gif, image/jpeg"
               />
-              <button
-                onClick={handleClick}
-                type="button"
-                disabled={loading}
-                className="cursor-pointer rounded-md bg-richblack-700 py-2 px-5 font-semibold text-richblack-50"
-              >
-                Select
-              </button>
-              <IconBtn
-                text={loading ? "Uploading..." : "Upload"}
-                onClick={handleFileUpload} // Fixed: lowercase 'c' to uppercase 'C'
-                disabled={loading}
-              >
-                {!loading && (
-                  <FiUpload className="text-lg text-richblack-900" />
-                )}
-              </IconBtn>
+              <div className="flex flex-row gap-2 flex-shrink-0 flex-nowrap items-center">
+                <button
+                  onClick={handleClick}
+                  type="button"
+                  disabled={loading}
+                  className="cursor-pointer rounded-md bg-richblack-700 py-2 px-3 sm:px-5 text-xs sm:text-sm font-semibold text-richblack-50"
+                  >
+                    Select
+                </button>
+                  <IconBtn
+                  text={loading ? "Uploading..." : "Upload"}
+                  onClick={handleFileUpload} // Fixed: lowercase 'c' to uppercase 'C'
+                  disabled={loading}
+                  className="py-2 px-3 sm:px-5 yext-xs sm:text-sm"
+                >
+                  {!loading && (
+                    <FiUpload className="text-sm sm:text-lg text-richblack-900" />
+                  )}
+                </IconBtn>
+              </div>
             </div>
           </div>
         </div>
