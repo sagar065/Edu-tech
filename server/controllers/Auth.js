@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken")
 const otpGenerator = require("otp-generator")
 const mailSender = require("../utils/mailSender")
 const { passwordReset } = require("../mail/templates/passwordUpdate")
-const otpTemplate  = require("../mail/templates/emailVerificationTemplate")
 const Profile = require("../models/Profile")
 require("dotenv").config()
 
@@ -45,20 +44,6 @@ exports.sendotp = async (req, res) => {
     // Save OTP to database
     await OTP.create({ email, otp });
 
-    // Send email with OTP
-    try {
-      const emailBody = otpTemplate(otp);
-      console.log("sending mail.....")
-      await mailSender(
-        email,
-        emailBody
-      );
-      console.log("mail sent successfully....")
-      console.log(`OTP email sent to ${email}`);
-    } catch (emailError) {
-      console.error("Email sending failed:", emailError.message);
-      // Continue - OTP is saved even if email fails
-    }
 
     return res.status(200).json({
       success: true,
