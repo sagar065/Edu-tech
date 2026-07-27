@@ -33,7 +33,7 @@ exports.resetPasswordToken = async (req, res) => {
         console.log("DETAILS", updatedDetails);
 
         // Created the link (Fixed double slash)
-        const url = `https://studynotionedtechapp.vercel.app/update-password/${token}`;
+        const url = `https://https://edu-tech-rho-eight.vercel.app//update-password/${token}`;
 
         // Send Email using the passwordReset template
         await mailSender(
