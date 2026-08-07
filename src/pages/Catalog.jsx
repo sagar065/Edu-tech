@@ -25,7 +25,7 @@ function Catalog() {
       try {
         const res = await apiConnector("GET", categories.CATEGORIES_API);
         const matchedCategory = res?.data?.data?.find(
-          (ct) => ct?.name?.replaceAll(" ", "_")?.toLowerCase() === catalogName?.replaceAll(" ","_")?.toLowerCase()
+          (ct) => ct?.name?.split(" ")?.join("-")?.toLowerCase() === catalogName?.split("-")?.join(" ")?.toLowerCase()
         );
 
         if (matchedCategory) {

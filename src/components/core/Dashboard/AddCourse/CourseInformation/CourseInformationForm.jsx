@@ -42,19 +42,19 @@ export default function CourseInformationForm() {
       setLoading(false)
     }
 
-    if (editCourse) {
-      setValue("courseTitle", course.courseName)
-      setValue("courseShortDesc", course.courseDescription)
-      setValue("coursePrice", course.price)
-      setValue("courseTags", course.tag)
-      setValue("courseBenefits", course.whatYouWillLearn)
-      setValue("courseCategory", course.category._id)
-      setValue("courseRequirements", course.instructions)
-      setValue("courseImage", course.thumbnail)
+    if (editCourse && course) {
+      setValue("courseTitle", course?.courseName)
+      setValue("courseShortDesc", course?.courseDescription)
+      setValue("coursePrice", course?.price)
+      setValue("courseTags", course?.tag)
+      setValue("courseBenefits", course?.whatYouWillLearn)
+      setValue("courseCategory", course?.category?._id || course?.category)
+      setValue("courseRequirements", course?.instructions)
+      setValue("courseImage", course?.thumbnail)
     }
 
     getCategories()
-  }, [course.category._id, course.courseDescription, course.courseName, course.instructions, course.price, course.tag, course.thumbnail, course.whatYouWillLearn, editCourse, setValue])
+  }, [course?.category?._id, course?.courseDescription, course?.courseName, course?.instructions, course?.price, course?.tag, course?.thumbnail, course?.whatYouWillLearn, editCourse, setValue])
 
   const isFormUpdated = () => {
     const currentValues = getValues()
@@ -76,13 +76,13 @@ export default function CourseInformationForm() {
         const currentValues = getValues()
         const formData = new FormData()
 
-        formData.append("courseId", course._id)
+        formData.append("courseId", course?._id)
         if (currentValues.courseTitle !== course.courseName) formData.append("courseName", data.courseTitle)
         if (currentValues.courseShortDesc !== course.courseDescription) formData.append("courseDescription", data.courseShortDesc)
         if (currentValues.coursePrice !== course.price) formData.append("price", data.coursePrice)
         if (currentValues.courseTags.toString() !== course.tag.toString()) formData.append("tag", JSON.stringify(data.courseTags))
         if (currentValues.courseBenefits !== course.whatYouWillLearn) formData.append("whatYouWillLearn", data.courseBenefits)
-        if (currentValues.courseCategory !== course.category._id) formData.append("category", data.courseCategory)
+        if (currentValues.courseCategory !== (course?.category?._id || course?.category)) formData.append("category", data.courseCategory)
         if (currentValues.courseRequirements.toString() !== course.instructions.toString()) {
           formData.append("instructions", JSON.stringify(data.courseRequirements))
         }
